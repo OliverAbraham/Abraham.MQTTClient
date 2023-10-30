@@ -1,14 +1,17 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Server;
 
 namespace Abraham.MQTTClient;
 public class MQTTClient
 {
     #region ------------- Types ---------------------------------------------------------------
+    public delegate void EventDelegate(string topic, string value);
+
     private class Subscription
     {
         public string? Topic { get; set; }
-        public Action<string>? Callback { get; set; }
+        public EventDelegate Callback { get; set; }
         public Func<MqttApplicationMessageReceivedEventArgs, Task>? Receiver { get; internal set; }
     }
     #endregion
@@ -26,6 +29,7 @@ public class MQTTClient
     private MqttClientDisconnectOptions? _mqttClientDisconnectOptions;
     private IMqttClient?                 _mqttClient;
     private List<Subscription>           _subscriptions = new();
+    private Dictionary<string,string>    _subscribedTopics = new();
     #endregion
 
 
@@ -128,20 +132,20 @@ public class MQTTClient
         return result;
     }
 
-    public MqttClientSubscribeResult Subscribe(string topic, Action<string> callback)
+    public MqttClientSubscribeResult Subscribe(string topic, EventDelegate onEvent)
     {
-        return SubscribeAsync(topic, callback).GetAwaiter().GetResult();
+        return SubscribeAsync(topic, onEvent).GetAwaiter().GetResult();
     }
 
-    public async Task<MqttClientSubscribeResult> SubscribeAsync(string topic, Action<string> callback)
+    public async Task<MqttClientSubscribeResult> SubscribeAsync(string topic, EventDelegate onEvent)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
-        if (callback is null)                 throw new Exception($"The value cannot be null.");
+        if (onEvent is null)                  throw new Exception($"The onEvent cannot be null.");
         if (_mqttClient  is null)             throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
 
         var sub = new Subscription();
         sub.Topic = topic;
-        sub.Callback = callback;
+        sub.Callback = onEvent;
 
         var response = await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
         if (response.ResultCode != MqttClientConnectResultCode.Success)
@@ -150,8 +154,10 @@ public class MQTTClient
 
         sub.Receiver = delegate(MqttApplicationMessageReceivedEventArgs e)
             {
-                _logger($"Received application message: {e}");
-                sub.Callback(e.ApplicationMessage.ConvertPayloadToString());
+                var topic = e.ApplicationMessage.Topic;
+                var value = e.ApplicationMessage.ConvertPayloadToString();
+                _logger($"Received application message: {topic}={value}");
+                sub.Callback(topic, value);
                 return Task.CompletedTask;
             };
         _mqttClient.ApplicationMessageReceivedAsync += sub.Receiver;
@@ -187,10 +193,37 @@ public class MQTTClient
 
         _subscriptions.Clear();
     }
-    #endregion
 
+    /// <summary>
+    /// Installs a subscriber for all topics. You can use the "TryGet" method then to get the value of a topic at any time.
+    /// </summary>
+    public MQTTClient SubscribeToAllTopics()
+    {
+        if (_mqttClient is null) throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
+        
+        Subscribe("#",
+            delegate(string topic, string value)
+            {
+                if (_subscribedTopics.ContainsKey(topic))
+                    _subscribedTopics[topic] = value;
+                else
+                    _subscribedTopics.Add(topic, value);
+            });
+        _logger($"Subscribed to all topics. All values will be recorded");
+        return this;
+    }
 
+    /// <summary>
+    /// Tries to get the value of a topic. If the topic has not been reported yet, null is returned.
+    /// </summary>
+    public string? TryGet(string topic)
+    {
+        if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
 
-    #region ------------- Implementation ------------------------------------------------------
+        if (_subscribedTopics.ContainsKey(topic))
+            return _subscribedTopics[topic];
+        else
+            return null;
+    }
     #endregion
 }

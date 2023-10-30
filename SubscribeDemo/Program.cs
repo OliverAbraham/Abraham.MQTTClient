@@ -27,9 +27,9 @@ internal class Program
         Console.WriteLine("Now listening to topic 'garden/temperature'...  press any key to end the program.");
 
         client.Subscribe("garden/temperature",
-            delegate(string value)
+            delegate(string topic, string value)
             {
-                Console.WriteLine($"New value received: {value}");
+                Console.WriteLine($"New event received: {topic}={value}");
             });
 
         Console.ReadKey();
