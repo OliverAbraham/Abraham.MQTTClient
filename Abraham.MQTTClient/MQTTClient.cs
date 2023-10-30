@@ -224,7 +224,7 @@ public class MQTTClient
     /// <summary>
     /// Installs a subscriber for all topics. You can use the "TryGet" method then to get the value of a topic at any time.
     /// </summary>
-    public async void SubscribeToAllTopicsAsync()
+    public async Task SubscribeToAllTopicsAsync()
     {
         if (_mqttClient is null) throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
         
