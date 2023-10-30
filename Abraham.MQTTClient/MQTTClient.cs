@@ -159,13 +159,12 @@ public class MQTTClient
             throw new Exception($"Could not connect to MQTT broker. ResultCode={response.ResultCode}");
         _logger($"Client is connected. ResultCode={response.ResultCode}");
 
-        sub.Receiver = delegate(MqttApplicationMessageReceivedEventArgs e)
+        sub.Receiver = async delegate(MqttApplicationMessageReceivedEventArgs e)
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = e.ApplicationMessage.ConvertPayloadToString();
                 _logger($"Received application message: {topic}={value}");
                 sub.Callback(topic, value);
-                return Task.CompletedTask;
             };
         _mqttClient.ApplicationMessageReceivedAsync += sub.Receiver;
 
