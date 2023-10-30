@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Screenshots", "3 Screensh
 		Screenshots\screenshot3.jpg = Screenshots\screenshot3.jpg
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubscribeToAllTopicsDemo", "SubscribeToAllTopicsDemo\SubscribeToAllTopicsDemo.csproj", "{EA2EE5AA-7437-4368-A69C-E5A242637D5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{85EE59AC-01B4-460B-B6C8-253ADCF02D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85EE59AC-01B4-460B-B6C8-253ADCF02D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85EE59AC-01B4-460B-B6C8-253ADCF02D13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2EE5AA-7437-4368-A69C-E5A242637D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2EE5AA-7437-4368-A69C-E5A242637D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2EE5AA-7437-4368-A69C-E5A242637D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2EE5AA-7437-4368-A69C-E5A242637D5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{5F226F2B-31F3-4ED8-ABBA-4FCF10FE5DF3} = {D3A3A4F6-A419-47BC-81B9-8E202B12CEFF}
 		{B3E8FAB7-F1D0-4A05-969B-372357A872EB} = {32134540-5D0E-4D2B-A88B-24475BD1B9AA}
 		{85EE59AC-01B4-460B-B6C8-253ADCF02D13} = {32134540-5D0E-4D2B-A88B-24475BD1B9AA}
+		{EA2EE5AA-7437-4368-A69C-E5A242637D5E} = {32134540-5D0E-4D2B-A88B-24475BD1B9AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ADBE1194-9AA3-4654-86AA-F1D9D6ED9AC1}
