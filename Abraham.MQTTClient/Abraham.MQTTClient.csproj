@@ -16,6 +16,9 @@
     <RepositoryUrl>https://github.com/OliverAbraham/Abraham.MQTTClient</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Version>1.0.1</Version>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>

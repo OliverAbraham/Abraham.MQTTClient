@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34112.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abraham.MQTTClient", "Abraham.MQTTClient\Abraham.MQTTClient.csproj", "{5F226F2B-31F3-4ED8-ABBA-4FCF10FE5DF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abraham.MQTTClient", "Abraham.MQTTClient\Abraham.MQTTClient.csproj", "{5F226F2B-31F3-4ED8-ABBA-4FCF10FE5DF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishDemo", "PublishDemo\PublishDemo.csproj", "{B3E8FAB7-F1D0-4A05-969B-372357A872EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishDemo", "PublishDemo\PublishDemo.csproj", "{B3E8FAB7-F1D0-4A05-969B-372357A872EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubscribeDemo", "SubscribeDemo\SubscribeDemo.csproj", "{85EE59AC-01B4-460B-B6C8-253ADCF02D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubscribeDemo", "SubscribeDemo\SubscribeDemo.csproj", "{85EE59AC-01B4-460B-B6C8-253ADCF02D13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Nuget Package", "1 Nuget Package", "{D3A3A4F6-A419-47BC-81B9-8E202B12CEFF}"
 EndProject
