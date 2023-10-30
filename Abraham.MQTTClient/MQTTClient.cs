@@ -222,6 +222,26 @@ public class MQTTClient
     }
 
     /// <summary>
+    /// Installs a subscriber for all topics. You can use the "TryGet" method then to get the value of a topic at any time.
+    /// </summary>
+    public async void SubscribeToAllTopicsAsync()
+    {
+        if (_mqttClient is null) throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
+        
+        await SubscribeAsync("#",
+            delegate(string topic, string value)
+            {
+                if (_subscribedTopics.ContainsKey(topic))
+                    _subscribedTopics[topic] = value;
+                else
+                    _subscribedTopics.Add(topic, value);
+
+                OnEvent(topic, value);
+            });
+        _logger($"Subscribed to all topics. All values will be recorded");
+    }
+
+    /// <summary>
     /// Tries to get the value of a topic. If the topic has not been reported yet, null is returned.
     /// </summary>
     public string? TryGet(string topic)
