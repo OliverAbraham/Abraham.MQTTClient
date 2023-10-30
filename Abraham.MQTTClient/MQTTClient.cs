@@ -18,6 +18,13 @@ public class MQTTClient
 
 
 
+    #region ------------- Properties --------------------------------------------------------------
+    public EventDelegate OnEvent { get => onEvent; set => onEvent = value ?? delegate (string topic, string value) { }; }
+    private EventDelegate onEvent = delegate (string topic, string value) { };
+    #endregion
+
+
+
     #region ------------- Fields --------------------------------------------------------------
     private string                       _url = "";
     private string                       _username = "";
@@ -208,6 +215,8 @@ public class MQTTClient
                     _subscribedTopics[topic] = value;
                 else
                     _subscribedTopics.Add(topic, value);
+
+                OnEvent(topic, value);
             });
         _logger($"Subscribed to all topics. All values will be recorded");
         return this;
