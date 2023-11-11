@@ -1,5 +1,9 @@
 # Abraham.MQTTClient
 
+![](https://img.shields.io/github/downloads/oliverabraham/Abraham.MQTTClient/total) ![](https://img.shields.io/github/license/oliverabraham/Abraham.MQTTClient) ![](https://img.shields.io/github/languages/count/oliverabraham/Abraham.MQTTClient) ![GitHub Repo stars](https://img.shields.io/github/stars/oliverabraham/Abraham.MQTTClient?label=repo%20stars) ![GitHub Repo stars](https://img.shields.io/github/stars/oliverabraham?label=user%20stars)
+
+
+
 ## OVERVIEW
 
 Connects to a MQTT broker, sends and receives topic values.
@@ -27,15 +31,15 @@ Install the Nuget package "Abraham.MQTTClient" into your application (from https
 
 Add the following code:
 ```C#
-    using Abraham.MQTTClient;
+using Abraham.MQTTClient;
 
-    var client = new MQTTClient()
-        .UseUrl(_url)
-        .UseUsername(_username)
-        .UsePassword(_password)
-        .Build();
+var client = new MQTTClient()
+    .UseUrl(_url)
+    .UseUsername(_username)
+    .UsePassword(_password)
+    .Build();
 
-    var result = client.Publish("garden/temperature", "19.1");
+var result = client.Publish("garden/temperature", "19.1");
 ```
 
 
@@ -117,3 +121,5 @@ This shows the Subscriber demo receiving the values (after 2 executions of Publi
 
 If you find this application useful, buy me a coffee!
 I would appreciate a small donation on https://www.buymeacoffee.com/oliverabraham
+
+<a href="https://www.buymeacoffee.com/app/oliverabraham" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
