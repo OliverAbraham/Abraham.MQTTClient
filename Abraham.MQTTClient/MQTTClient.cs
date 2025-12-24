@@ -110,41 +110,44 @@ public class MQTTClient
         return this;
     }
 
-    public MqttClientPublishResult Publish(string topic, string value)
+    public MqttClientPublishResult Publish(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default)
     {
-        return PublishAsync(topic, value).GetAwaiter().GetResult();
+        return PublishAsync(topic, value, useOpenConnection, cancellationToken).GetAwaiter().GetResult();
     }
 
-    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value)
+    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
         if (string.IsNullOrWhiteSpace(value)) throw new Exception($"The value cannot be null.");
         if (_mqttClient  is null)             throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
 
-        var response = await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
-        if (response.ResultCode != MqttClientConnectResultCode.Success)
-            throw new Exception($"Could not connect to MQTT broker. ResultCode={response.ResultCode}");
-        _logger($"Client is connected. ResultCode={response.ResultCode}");
+        if (!useOpenConnection)
+        {
+            var response = await _mqttClient.ConnectAsync(_mqttClientOptions, cancellationToken);
+            if (response.ResultCode != MqttClientConnectResultCode.Success)
+                throw new Exception($"Could not connect to MQTT broker. ResultCode={response.ResultCode}");
+            _logger($"Client is connected. ResultCode={response.ResultCode}");
+        }
            
 
         var applicationMessage = new MqttApplicationMessageBuilder()
             .WithTopic(topic)
             .WithPayload(value)
             .Build();
-        var result = await _mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
+        var result = await _mqttClient.PublishAsync(applicationMessage, cancellationToken);
 
         _logger($"Published. ResultCode={result.ReasonCode}");
 
-        await _mqttClient.DisconnectAsync(_mqttClientDisconnectOptions, CancellationToken.None);
+        await _mqttClient.DisconnectAsync(_mqttClientDisconnectOptions, cancellationToken);
         return result;
     }
 
-    public MqttClientSubscribeResult Subscribe(string topic, EventDelegate onEvent)
+    public MqttClientSubscribeResult Subscribe(string topic, EventDelegate onEvent, CancellationToken cancellationToken = default)
     {
-        return SubscribeAsync(topic, onEvent).GetAwaiter().GetResult();
+        return SubscribeAsync(topic, onEvent, cancellationToken).GetAwaiter().GetResult();
     }
 
-    public async Task<MqttClientSubscribeResult> SubscribeAsync(string topic, EventDelegate onEvent)
+    public async Task<MqttClientSubscribeResult> SubscribeAsync(string topic, EventDelegate onEvent, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
         if (onEvent is null)                  throw new Exception($"The onEvent cannot be null.");
@@ -154,7 +157,7 @@ public class MQTTClient
         sub.Topic = topic;
         sub.Callback = onEvent;
 
-        var response = await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
+        var response = await _mqttClient.ConnectAsync(_mqttClientOptions, cancellationToken);
         if (response.ResultCode != MqttClientConnectResultCode.Success)
             throw new Exception($"Could not connect to MQTT broker. ResultCode={response.ResultCode}");
         _logger($"Client is connected. ResultCode={response.ResultCode}");
@@ -176,7 +179,7 @@ public class MQTTClient
                 })
             .Build();
 
-        var result = await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+        var result = await _mqttClient.SubscribeAsync(mqttSubscribeOptions, cancellationToken);
         if (!string.IsNullOrWhiteSpace(result.ReasonString))
             throw new Exception($"Could not subscribe to topic {topic}. Reason={result.ReasonString}");
 

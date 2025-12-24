@@ -24,9 +24,10 @@ internal class Program
             .UsePassword(_password)
             .Build();
 
-        Console.WriteLine("Now listening to topic 'garden/temperature'...  press any key to end the program.");
+        var topic = "testtopic/#";
 
-        client.Subscribe("garden/temperature",
+        Console.WriteLine($"Now listening to topic '{topic}'...  press any key to end the program.");
+        client.Subscribe(topic,
             delegate(string topic, string value)
             {
                 Console.WriteLine($"New event received: {topic}={value}");

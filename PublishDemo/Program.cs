@@ -24,8 +24,16 @@ internal class Program
             .UsePassword(_password)
             .Build();
 
-        var result = client.Publish("garden/temperature", "19.1");
+        int waterLevel = 0;
+        do
+        {
+            var result = client.Publish("regentonne/füllstand", waterLevel.ToString());
+            Console.WriteLine($"Value '{waterLevel}' sent to the MQTT broker. Result={result.ReasonCode} {result.ReasonString}");
 
-        Console.WriteLine($"Value '\"19.1\" sent to the MQTT broker. Result={result.ReasonCode} {result.ReasonString}");
+            Thread.Sleep(5000);
+            waterLevel = (waterLevel <= 75) ? waterLevel + 25 : 0;
+        }
+        while (!Console.KeyAvailable);
+
     }
 }
