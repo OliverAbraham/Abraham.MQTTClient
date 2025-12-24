@@ -138,7 +138,8 @@ public class MQTTClient
 
         _logger($"Published. ResultCode={result.ReasonCode}");
 
-        await _mqttClient.DisconnectAsync(_mqttClientDisconnectOptions, cancellationToken);
+        if (!useOpenConnection)
+            await _mqttClient.DisconnectAsync(_mqttClientDisconnectOptions, cancellationToken);
         return result;
     }
 
