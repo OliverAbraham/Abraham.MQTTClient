@@ -115,7 +115,7 @@ public class MQTTClient
         return PublishAsync(topic, value, useOpenConnection, cancellationToken).GetAwaiter().GetResult();
     }
 
-    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default)
+    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default, bool? retain = null, int? qos = null)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
         if (string.IsNullOrWhiteSpace(value)) throw new Exception($"The value cannot be null.");
@@ -130,10 +130,18 @@ public class MQTTClient
         }
            
 
-        var applicationMessage = new MqttApplicationMessageBuilder()
+        var builder = new MqttApplicationMessageBuilder()
             .WithTopic(topic)
-            .WithPayload(value)
-            .Build();
+            .WithPayload(value);
+        
+        if (retain is not null)
+            builder.WithRetainFlag(retain.Value);
+        
+        if (qos is not null)
+            builder.WithQualityOfServiceLevel((MQTTnet.Protocol.MqttQualityOfServiceLevel)qos.Value);
+
+        var applicationMessage = builder.Build();
+
         var result = await _mqttClient.PublishAsync(applicationMessage, cancellationToken);
 
         _logger($"Published. ResultCode={result.ReasonCode}");
