@@ -6,6 +6,13 @@ namespace Abraham.MQTTClient;
 public class MQTTClient
 {
     #region ------------- Types ---------------------------------------------------------------
+    public enum MQTTQualityOfServiceLevel
+    {
+        AtMostOnce  = 0x00,
+        AtLeastOnce = 0x01,
+        ExactlyOnce = 0x02
+    }
+
     public delegate void EventDelegate(string topic, string value);
 
     private class Subscription
@@ -110,12 +117,14 @@ public class MQTTClient
         return this;
     }
 
-    public MqttClientPublishResult Publish(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default)
+    public MqttClientPublishResult Publish(string topic, string value, bool useOpenConnection = false, 
+        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null)
     {
         return PublishAsync(topic, value, useOpenConnection, cancellationToken).GetAwaiter().GetResult();
     }
 
-    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, CancellationToken cancellationToken = default, bool? retain = null, int? qos = null)
+    public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, 
+        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
         if (string.IsNullOrWhiteSpace(value)) throw new Exception($"The value cannot be null.");
@@ -138,7 +147,7 @@ public class MQTTClient
             builder.WithRetainFlag(retain.Value);
         
         if (qos is not null)
-            builder.WithQualityOfServiceLevel((MQTTnet.Protocol.MqttQualityOfServiceLevel)qos.Value);
+            builder.WithQualityOfServiceLevel(MapQosLevel(qos.Value));
 
         var applicationMessage = builder.Build();
 
@@ -264,6 +273,19 @@ public class MQTTClient
             return _subscribedTopics[topic];
         else
             return null;
+    }
+    #endregion
+
+    #region ------------- Implementation ----------------------------------------------------------
+    private MQTTnet.Protocol.MqttQualityOfServiceLevel MapQosLevel(MQTTQualityOfServiceLevel value)
+    {
+        return value switch
+        {
+            MQTTQualityOfServiceLevel.AtMostOnce  => MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce,
+            MQTTQualityOfServiceLevel.AtLeastOnce => MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce,
+            MQTTQualityOfServiceLevel.ExactlyOnce => MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce,
+            _ => throw new Exception($"Unknown QoS level: {value}"),
+        };
     }
     #endregion
 }
