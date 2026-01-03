@@ -118,17 +118,19 @@ public class MQTTClient
     }
 
     public MqttClientPublishResult Publish(string topic, string value, bool useOpenConnection = false, 
-        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null)
+        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null,
+        byte[]? correlationData = null)
     {
-        return PublishAsync(topic, value, useOpenConnection, cancellationToken).GetAwaiter().GetResult();
+        return PublishAsync(topic, value, useOpenConnection, cancellationToken, retain, qos, correlationData).GetAwaiter().GetResult();
     }
 
     public async Task<MqttClientPublishResult> PublishAsync(string topic, string value, bool useOpenConnection = false, 
-        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null)
+        CancellationToken cancellationToken = default, bool? retain = null, MQTTQualityOfServiceLevel? qos = null,
+        byte[]? correlationData = null)
     {
-        if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null.");
-        if (string.IsNullOrWhiteSpace(value)) throw new Exception($"The value cannot be null.");
-        if (_mqttClient  is null)             throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
+        if (string.IsNullOrWhiteSpace(topic)) throw new Exception($"The topic cannot be null or empty.");
+        if (value is null)                    throw new Exception($"The value cannot be null.");
+        if (_mqttClient is null)              throw new Exception($"The MQTTClient has not been built. Call the Build() method first.");
 
         if (!useOpenConnection)
         {
@@ -148,6 +150,9 @@ public class MQTTClient
         
         if (qos is not null)
             builder.WithQualityOfServiceLevel(MapQosLevel(qos.Value));
+
+        if (correlationData is not null)
+            builder.WithCorrelationData(correlationData);
 
         var applicationMessage = builder.Build();
 
