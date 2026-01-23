@@ -1,6 +1,5 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Server;
 
 namespace Abraham.MQTTClient;
 public class MQTTClient
@@ -115,6 +114,18 @@ public class MQTTClient
 
         _logger($"Client initialized");
         return this;
+    }
+
+    public void Connect(CancellationToken cancellationToken = default)
+    {
+        ConnectAsync(cancellationToken).GetAwaiter().GetResult();
+    }
+
+    public async Task ConnectAsync(CancellationToken cancellationToken = default)
+    {
+        var response = (cancellationToken == default)
+            ? await _mqttClient.ConnectAsync(_mqttClientOptions)
+            : await _mqttClient.ConnectAsync(_mqttClientOptions, cancellationToken);
     }
 
     public MqttClientPublishResult Publish(string topic, string value, bool useOpenConnection = false, 
